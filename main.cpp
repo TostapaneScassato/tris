@@ -646,3 +646,5 @@ void play(Tris &match) {
       exit(1);
    }
 }
+
+// Copyright (c) 2026 Stefano Carletti
