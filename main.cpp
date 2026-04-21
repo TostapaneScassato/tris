@@ -176,10 +176,10 @@ public:
                   matrix[row][col] = 'X'; // simulate a possible move
 
                   bool victory =
-                           (matrix[row][ 0 ] == matrix[row][ 1 ] && matrix[row][ 0 ] == matrix[row][ 2 ]) || // won in a row
-                           (matrix[ 0 ][col] == matrix[ 1 ][col] && matrix[ 0 ][col] == matrix[ 2 ][col]) || // won in a col
-                           (matrix[ 0 ][ 0 ] == matrix[ 1 ][ 1 ] && matrix[ 0 ][ 0 ] == matrix[ 2 ][ 2 ]) || // won on main diagonal
-                           (matrix[ 0 ][ 2 ] == matrix[ 1 ][ 1 ] && matrix[ 0 ][ 2 ] == matrix[ 2 ][ 0 ]);   // won on secondary diagonal
+                           (matrix[row][ 0 ] == matrix[row][ 1 ] && matrix[row][ 0 ] == matrix[row][ 2 ] && matrix[row][ 0 ] != ' ') || // won in a row
+                           (matrix[ 0 ][col] == matrix[ 1 ][col] && matrix[ 0 ][col] == matrix[ 2 ][col] && matrix[ 0 ][col] != ' ') || // won in a col
+                           (matrix[ 0 ][ 0 ] == matrix[ 1 ][ 1 ] && matrix[ 0 ][ 0 ] == matrix[ 2 ][ 2 ] && matrix[ 0 ][ 0 ] != ' ') || // won on main diagonal
+                           (matrix[ 0 ][ 2 ] == matrix[ 1 ][ 1 ] && matrix[ 0 ][ 2 ] == matrix[ 2 ][ 0 ] && matrix[ 0 ][ 2 ] != ' ');   // won on secondary diagonal
 
                   matrix[row][col] = ' '; // I can't place another player's symbol
 
@@ -406,7 +406,7 @@ public:
       cout << Vertical << " " << this->matrix[1][0] << " " << Vertical << " " << this->matrix[1][1] << " " << Vertical << " " << this->matrix[1][2] << " " << Vertical << endl;
       cout << Tright << Orizzontal << Orizzontal << Orizzontal << Cross << Orizzontal << Orizzontal << Orizzontal << Cross << Orizzontal << Orizzontal << Orizzontal << Tleft << endl;
       cout << Vertical << " " << this->matrix[2][0] << " " << Vertical << " " << this->matrix[2][1] << " " << Vertical << " " << this->matrix[2][2] << " " << Vertical << endl;
-      cout << BottomLeft << Orizzontal << Orizzontal << Orizzontal << Tup << Orizzontal << Orizzontal << Orizzontal << Tup << Orizzontal << Orizzontal << Orizzontal << BottomRight << endl;
+      cout << BottomLeft << Orizzontal << Orizzontal << Orizzontal << Tup << Orizzontal << Orizzontal << Orizzontal << Tup << Orizzontal << Orizzontal << Orizzontal << BottomRight << endl << endl;
    }
 };
 
@@ -438,7 +438,8 @@ int main() {
       cout << "What would you like to do?" << endl;
       cout << "[1] Start a new game;" << endl;
       cout << "[2] Load a saved game;" << endl;
-      if (mode == 1) cout << "[3] Change the difficulty (currently: " << match.getDifficulty() << ");" << endl;
+      if (mode == 1) cout << "[3] Change the difficulty (currently: ";
+      (match.getDifficulty() == 1)? cout << "1 - easy);" << endl : cout << "2 - hard);" << endl;
       cout << "[0] Exit the game." << endl << "> ";
 
       cin >> menuChoice;
@@ -449,6 +450,8 @@ int main() {
 
       switch (menuChoice) {
       case 1:
+         match.clearMatrix();
+         match.resetMoves();
          play(match);
          break;
 
@@ -518,11 +521,7 @@ void play(Tris &match) {
          switch (menuChoice) {
          case 1:
          
-            if (match.getMoves()%2) {
-               match.botMove();
-            } else {
-               match.makeMove(1);
-            }
+            match.makeMove(1);
          
             result = match.hasWon();
             if (result) {
@@ -540,6 +539,27 @@ void play(Tris &match) {
             }
 
             match.incrementMove();
+
+            SYS_CLEAR();
+            match.print();
+
+            cout << "The bot is thinking"; wait();
+            match.botMove();
+
+            result = match.hasWon();
+            if (result) {
+               SYS_CLEAR();
+               match.print();
+               
+               cout << endl;
+               if (result == 1) cout << "Player 1 has won";
+               if (result == 2) cout << "The bot has won";
+               if (result == 3) cout << "There has been a tie";
+               wait();
+
+               SYS_PAUSE();
+               return;
+            }
 
             break;
 
