@@ -439,7 +439,7 @@ int main() {
       cout << "[1] Start a new game;" << endl;
       cout << "[2] Load a saved game;" << endl;
       if (mode == 1) cout << "[3] Change the difficulty (currently: ";
-      (match.getDifficulty() == 1)? cout << "1 - easy);" << endl : cout << "2 - hard);" << endl;
+      if (mode == 1) (match.getDifficulty() == 1)? cout << "1 - easy);" << endl : cout << "2 - hard);" << endl;
       cout << "[0] Exit the game." << endl << "> ";
 
       cin >> menuChoice;
